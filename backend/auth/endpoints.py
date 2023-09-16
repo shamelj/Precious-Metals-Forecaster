@@ -6,3 +6,7 @@ auth = Blueprint('auth', __name__)
 def login():
 
     return "you're logged in now :) yay"
+
+# register endpoint
+
+# refresh token endpoint
