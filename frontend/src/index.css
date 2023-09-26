@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: antiquewhite;
+  /* padding-top: 30px; */
+}
+
+.main-chart {
+  border: 2px solid black;
+  background-color: white;
+}
+
+.line-chart {
+  border: 2px dashed red;
+}

@@ -1,4 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import '../index.css';
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
 
@@ -27,30 +28,29 @@ const TimeserieseChart = ({ actual, prediction }) => {
         actualFormatted[actualFormatted.length - 1].pricePrediction = actualFormatted[actualFormatted.length - 1].priceActual;
         data.push(...actualFormatted, ...predictionFormatted);
     }
-    
+
 
     return (
         (data.length > 0 && (
-            <LineChart
-                width={500}
-                height={300}
-                data={data}
-            >
-                <XAxis dataKey="date" interval='preserveStartEnd' />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                    type="linear"
-                    dataKey="priceActual"
-                    stroke="#8884d8"
-                />
-                <Line
-                    type="linear"
-                    dataKey="pricePrediction"
-                    stroke="#5fc77d"
-                />
-            </LineChart>))
+            <div className='main-chart'>
+                <LineChart className='line-chart'
+                    width={700}
+                    height={450}
+                    data={data}>
+                    <XAxis dataKey="date" interval='preserveStartEnd' />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                        type="linear"
+                        dataKey="priceActual"
+                        stroke="#8884d8" />
+                    <Line
+                        type="linear"
+                        dataKey="pricePrediction"
+                        stroke="#5fc77d" />
+                </LineChart>
+            </div>))
     );
 }
 

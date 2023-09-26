@@ -32,7 +32,7 @@ const Home = () => {
                     price: 800
                 },
             ];
-        
+
             const predictionsData = [
                 {
                     date: '2023/09/09',
@@ -51,7 +51,7 @@ const Home = () => {
                     price: 800
                 },
             ];
-        
+
             setActual(actualData);
             setPredictions(predictionsData);
         }
@@ -61,10 +61,12 @@ const Home = () => {
     console.log(actual);
 
     return (
-        <TimeserieseChart
-            actual={actual}
-            prediction={predictions}
-        />
+        <div className='home'>
+            <TimeserieseChart
+                actual={actual}
+                prediction={predictions}
+            />
+        </div>
     );
 }
 
