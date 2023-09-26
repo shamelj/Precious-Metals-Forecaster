@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./Pages/Home"
+import ContinuousEvaluation from "./Pages/ContinuousEvaluation"
 const App = () => {
   return (
     <div>
-      <Home/>
+      <ContinuousEvaluation/>
     </div>
   // <BrowserRouter>
   // <Routes>

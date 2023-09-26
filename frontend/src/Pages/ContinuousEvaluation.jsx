@@ -3,34 +3,23 @@ import TimeserieseChart from '../Components/TimeserieseChart'
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
 
-const formatData = (actual, prediction) => {
+const formatData = (actual, predictions) => {
     const data = [];
+    
+    const datePredictValueMap = {};
 
-    const actualFormatted = actual
-        .sort(comparator)
-        .map(o => {
-            return { date: o.date, priceActual: o.price }
-        });
-
-    const predictionFormatted = prediction
-        .sort(comparator)
-        .map(o => {
-            return { date: o.date, pricePrediction: o.price }
-        });
-
-    if (actual.length + prediction.length === 0) {
-        data.push({
-            date: '',
-            priceActual: 0
-        });
-    } else {
-        actualFormatted[actualFormatted.length - 1].pricePrediction = actualFormatted[actualFormatted.length - 1].priceActual;
-        data.push(...actualFormatted, ...predictionFormatted);
+    for ( const prediction of predictions ) {
+        datePredictValueMap[prediction.date] = prediction.price;
     }
-    return data;
+
+    return actual
+        .sort(comparator)
+        .map(o => {
+            return { date: o.date, priceActual: o.price, pricePrediction: datePredictValueMap[o.date] }
+        });
 }
 
-const Home = () => {
+const ContinuousEvaluation = () => {
     const [actual, setActual] = useState([]);
     const [predictions, setPredictions] = useState([]);
 
@@ -64,20 +53,26 @@ const Home = () => {
 
             const predictionsData = [
                 {
-                    date: '2023/09/09',
+                    date: '2023/09/02',
+                    price: 110
+                }, {
+                    date: '2023/09/01',
+                    price: 180
+                }, {
+                    date: '2023/09/04',
+                    price: 250
+                }, {
+                    date: '2023/09/03',
+                    price: 600
+                }, {
+                    date: '2023/09/05',
                     price: 1000
                 }, {
-                    date: '2023/09/10',
-                    price: 1100
+                    date: '2023/09/06',
+                    price: 600
                 }, {
-                    date: '2023/09/11',
-                    price: 900
-                }, {
-                    date: '2023/09/12',
-                    price: 700
-                }, {
-                    date: '2023/09/13',
-                    price: 800
+                    date: '2023/09/08',
+                    price: 650
                 },
             ];
 
@@ -90,7 +85,7 @@ const Home = () => {
     const data = formatData(actual, predictions);
 
     return (
-        <div className='home'>
+        <div className='someClass'>
             <TimeserieseChart
                 data={data}
             />
@@ -98,4 +93,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default ContinuousEvaluation;
