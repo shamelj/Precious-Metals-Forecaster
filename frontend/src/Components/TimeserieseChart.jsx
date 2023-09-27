@@ -7,18 +7,18 @@ const TimeserieseChart = ({ data }) => {
         (data.length > 0 && (
             <div className='main-chart'>
                 <LineChart className='line-chart'
-                    width={700}
-                    height={450}
+                    width={800}
+                    height={550}
                     data={data}>
                     <XAxis dataKey="date" interval='preserveStartEnd' />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line
+                    <Line className='line'
                         type="linear"
                         dataKey="priceActual"
                         stroke="#8884d8" />
-                    <Line
+                    <Line className='line'
                         type="linear"
                         dataKey="pricePrediction"
                         stroke="#5fc77d" />

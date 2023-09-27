@@ -85,7 +85,7 @@ const ContinuousEvaluation = () => {
     const data = formatData(actual, predictions);
 
     return (
-        <div className='someClass'>
+        <div className='evaluation'>
             <TimeserieseChart
                 data={data}
             />
