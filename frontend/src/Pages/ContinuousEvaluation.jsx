@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import TimeserieseChart from '../Components/TimeserieseChart'
+import TimeserieseChart from '../Components/TimeserieseChart';
+import PredictionStatsTable from '../Components/PredictionStatsTable';
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
 
 const formatData = (actual, predictions) => {
     const data = [];
-    
+
     const datePredictValueMap = {};
 
-    for ( const prediction of predictions ) {
+    for (const prediction of predictions) {
         datePredictValueMap[prediction.date] = prediction.price;
     }
 
@@ -86,6 +87,8 @@ const ContinuousEvaluation = () => {
 
     return (
         <div className='evaluation'>
+            <PredictionStatsTable actual={actual} predictions={predictions}
+            />
             <TimeserieseChart
                 data={data}
             />

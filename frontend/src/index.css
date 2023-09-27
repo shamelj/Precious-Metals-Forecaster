@@ -19,13 +19,13 @@ code {
 }
 
 
-.home, .evaluation {
+.home,
+.evaluation {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100vw;
-  /* padding: 0 30px; */
 }
 
 .main-chart {
@@ -42,7 +42,7 @@ code {
 .intro {
   padding: 10px 50px;
   width: 30%;
-  height: 100vh;  
+  height: 100vh;
   /* border: 2px solid red; */
   display: flex;
   justify-content: center;
@@ -84,4 +84,62 @@ code {
 .nav-bar a {
   text-decoration: none;
   color: #0e2535;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f2f2f2;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+table,
+th,
+td {
+  /* border: 1px solid #ccc; */
+  border-collapse: collapse;
+  text-align: center;
+}
+
+table,
+th,
+td,
+h2 {
+  background-color: #0e2535;
+  color: rgb(203, 219, 228);
+}
+
+h2 {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 20px;
+}
+
+.prediction-stats {
+  margin-right: 50px;
+  border-radius: 10px;
+  padding: 5px;
+  border: 0.5px solid darkgray;
+  text-align: center;
+  box-shadow: 3px 5px 10px grey;
+  background-color: #0e2535;
 }
