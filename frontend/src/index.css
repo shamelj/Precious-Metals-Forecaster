@@ -1,5 +1,5 @@
 body {
-  margin: 0;
+  margin: auto;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -9,6 +9,8 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  max-width: 1280;
+  max-height: 720;
 }
 
 code {
@@ -23,17 +25,40 @@ code {
   align-items: center;
   height: 100vh;
   width: 100vw;
-  /* padding-top: 30px; */
+  /* padding: 0 30px; */
 }
 
 .main-chart {
   border: 2px solid lightgray;
-  background-color: #f4f7f5;
+  background-color: #f4f4f7;
   box-shadow: 2px 5px 10px darkgray;
+  padding: 15px 5px 10px 5px;
 }
 
 .line-chart {
   /* border: 2px dashed red; */
+}
+
+.intro {
+  padding: 10px 50px;
+  width: 30%;
+  height: 100vh;  
+  /* border: 2px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 10px;
+  background-color: #0e2535;
+  z-index: -1;
+  color: rgb(203, 219, 228);
+}
+
+.intro-paragraph {
+  text-align: justify;
+  line-height: 1.5;
+  /* text-shadow: 0.5px 0.2px grey; */
+  font-weight: bold;
 }
 
 .nav-bar {
@@ -53,6 +78,7 @@ code {
 
 .nav-bar a.active {
   font-weight: bold;
+  color: #0e2535;
 }
 
 .nav-bar a {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import TimeserieseChart from '../Components/TimeserieseChart'
+import Intro from '../Components/Intro';
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
 
@@ -91,9 +92,10 @@ const Home = () => {
 
     return (
         <div className='home'>
+            <Intro />
             <TimeserieseChart
                 data={data}
-            />
+            />            
         </div>
     );
 }
