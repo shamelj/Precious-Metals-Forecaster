@@ -1,0 +1,138 @@
+:root {
+  --intro-backgorund-color: #0e2535;
+  --font-color: #ececec;
+  --chart-background-color: #f4f4f7;
+}
+
+body {
+  margin: auto;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  max-width: 1280;
+  max-height: 720;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+.home,
+.evaluation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.main-chart {
+  border: 2px solid lightgray;
+  background-color: var(--chart-background-color);
+  box-shadow: 2px 5px 10px darkgray;
+  padding: 15px 5px 10px 5px;
+}
+
+.intro {
+  padding: 10px 50px;
+  width: 30%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 10px;
+  background-color: var(--intro-backgorund-color);
+  z-index: 1;
+  color: var(--font-color);
+}
+
+.intro-paragraph {
+  text-align: justify;
+  line-height: 1.5;
+  font-weight: bold;
+}
+
+.nav-bar {
+  height: 50px;
+  background-color: var(--intro-backgorund-color);
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding-left: 30px;
+  box-shadow: 1px 1px 10px grey;
+}
+
+.nav-link {
+  padding: 10px;
+}
+
+.nav-bar a.active {
+  font-weight: bold;
+  color: var(--font-color);
+}
+
+.nav-bar a {
+  text-decoration: none;
+  color: var(--font-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  border-bottom: 1px solid var(--font-color);
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--font-color);
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid var(--font-color);
+}
+
+table,
+th,
+td {
+  border-collapse: collapse;
+  text-align: center;
+}
+
+table,
+th,
+td,
+h2 {
+  background-color: var(--intro-backgorund-color);
+  color: var(--font-color);
+}
+
+h2 {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 20px;
+}
+
+.prediction-stats {
+  margin-right: 50px;
+  border-radius: 10px;
+  padding: 5px;
+  border: 0.5px solid darkgray;
+  text-align: center;
+  box-shadow: 3px 5px 10px grey;
+  background-color: var(--intro-backgorund-color);
+}

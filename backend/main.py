@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
@@ -8,6 +8,7 @@ import requests
 from datetime import datetime, date
 import json
 import sqlite3
+from Predictor import Predictor
 
 from flask_apscheduler import APScheduler
 
@@ -104,6 +105,10 @@ def api_endpoint():
 def health_backend():
     return 'Up and running :)'
 
+@app.route('/fetch')
+def fetch():
+    return get_today_value()
+
 @app.route('/health/database')
 def health_database():
     # try:
@@ -124,4 +129,5 @@ if __name__ == '__main__':
         )
     scheduler.start()
     app.run(debug=True, port=5000, use_reloader=False)
+
    
