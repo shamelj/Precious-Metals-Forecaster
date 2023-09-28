@@ -8,6 +8,7 @@ import requests
 from datetime import datetime, date
 import json
 import sqlite3
+from Predictor import Predictor
 
 from flask_apscheduler import APScheduler
 
@@ -70,11 +71,46 @@ def get_today_value():
     date_obj = dt_object
     a = result
     p = 0   #Predicted value from model API  ####### NOT AVAILABLE YET
+    d = date_obj
     insert_query = "INSERT INTO GoldPrice (date, predicted, actual) VALUES (?, ?, ?)"
     data = (d, p, a)
     cursor.execute(insert_query, data)
     connection.commit()
     connection.close()
+    return "done"
+
+import sqlite3
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+# Define a route to fetch all records in the GoldPrice table
+@app.route('/gold_prices', methods=['GET'])
+def get_gold_prices():
+    try:
+        # Connect to the SQLite database
+        connection = sqlite3.connect("site.db")
+
+        # Create a cursor object to execute SQL queries
+        cursor = connection.cursor()
+
+        # Execute a query to fetch all records from the GoldPrice table
+        cursor.execute("SELECT date, predicted, actual FROM GoldPrice")
+
+        # Fetch all records from the result cursor
+        gold_prices = cursor.fetchall()
+
+        # Close the database connection
+        connection.close()
+
+        # Convert the records to a list of dictionaries
+        gold_prices_list = [{'date': record[0], 'predicted': record[1], 'actual': record[2]} for record in gold_prices]
+
+        # Return the records as JSON data
+        return jsonify(gold_prices_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Return an error response if an exception occurs
+
 
 #scheduler
 scheduler = APScheduler()
@@ -83,6 +119,10 @@ scheduler = APScheduler()
 @app.route('/health')
 def health_backend():
     return 'Up and running :)'
+
+@app.route('/fetch')
+def fetch():
+    return get_today_value()
 
 @app.route('/health/database')
 def health_database():
@@ -94,13 +134,15 @@ def health_database():
 
 
 if __name__ == '__main__':
-    scheduler.add_job(id='get_today_value',
+    scheduler.add_job(
+        id='get_today_value',
         func=get_today_value, 
-        'trigger': 'interval',
-        'days': 1,  # Run the task every day
-        'start_date': datetime.datetime(2023, 9, 28, 0, 0),  # Optional: Specify a start date
-        'timezone': 'UTC'  # Optional: Specify a timezone
-        )
+        trigger='interval',
+        days=1,  # Run the task every day
+        start_date=datetime(2023, 9, 28, 0, 0),  # Optional: Specify a start date
+        timezone='UTC'  # Optional: Specify a timezone
+    )
     scheduler.start()
     app.run(debug=True, port=5000, use_reloader=False)
+
    
