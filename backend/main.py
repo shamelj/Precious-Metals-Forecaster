@@ -18,6 +18,9 @@ db_name = 'gsg_project_database'
 db_user = 'gsg_project_user'
 db_pass = 'root'
 
+API_KEY1 = 'eb80225495f4ff80c472d50dea711848&base'
+API_KEY2 = '60a4942d19e163dbd2503f533c137936'
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///site.db'
 #app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_pass}@localhost:5000/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -35,16 +38,14 @@ app.app_context().push()
 def get_today_value():
     """The function calls the API on daily bases and uploads the most recent data to DB"""
 
-    API_URL = 'https://api.metalpriceapi.com/v1/latest?api_key=eb80225495f4ff80c472d50dea711848&base=XAU&currencies=USD'
-    #payload =  {'start_date': start_date, 'end_date': end_date}
+    API_URL = f'https://api.metalpriceapi.com/v1/latest?api_key={API_KEY1}&base=XAU&currencies=USD'
     res = requests.get(API_URL) 
     parsed = res.json()
     timestamp = parsed['timestamp']
+    #returns date
     dt_object = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d")   #Convert Date Format to YYYY-mm-dd
 
-    #print('date: ',dt_object)  #print the result
-    result = parsed['rates']['USD']
-    #print('value: ',result)
+    result = parsed['rates']['USD']   #returns the Price
 
     #connect to db
     connection = sqlite3.connect("site.db")
@@ -69,6 +70,34 @@ def get_today_value():
 
 #scheduler
 scheduler = APScheduler()
+
+# Actual values Endpoint
+
+@app.route('/actuals', methods=['GET'])
+def api_endpoint():
+    # Get query parameters from the URL
+    try:
+        param1 = request.args.get('start_date')
+        
+        # Check if required parameters are missing
+        if param1 is None:
+            return jsonify({'error': 'Missing required query parameters'}), 400
+
+        # Process the parameters
+
+        URL = f'https://api.metalpriceapi.com/v1/{param1}?api_key={API_KEY1}&base=XAU&currencies=USD'
+        res = requests.get(URL) 
+        parsed = res.json()
+        print('parsed', parsed)
+        timestamp = parsed['timestamp']
+        dt_object = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d")   #Convert Date Format to YYYY-mm-dd
+        #print('date: ',dt_object)  #print the result
+        result = parsed['rates']['USD']
+        return jsonify({'Date:':dt_object, 'Price:': result})
+
+    except Exception as e:
+    # Handle the exception and return an error response
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/health')
