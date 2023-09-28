@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
@@ -84,7 +84,7 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# Define a route to fetch all records in the GoldPrice table
+# Define a route to fetch records from the GoldPrice table based on a start_date parameter
 @app.route('/gold_prices', methods=['GET'])
 def get_gold_prices():
     try:
@@ -93,9 +93,15 @@ def get_gold_prices():
 
         # Create a cursor object to execute SQL queries
         cursor = connection.cursor()
+        print(request.args.get('start_date'))
+        # Get the 'start_date' parameter from the query string (e.g., /gold_prices?start_date=2023-09-28)
+        start_date = request.args.get('start_date')
 
-        # Execute a query to fetch all records from the GoldPrice table
-        cursor.execute("SELECT date, predicted, actual FROM GoldPrice")
+        # Define the SQL query with a WHERE clause to filter records by 'date'
+        query = "SELECT date, predicted, actual FROM GoldPrice WHERE date >= ?"
+
+        # Execute the query with the 'start_date' parameter
+        cursor.execute(query, (start_date,))
 
         # Fetch all records from the result cursor
         gold_prices = cursor.fetchall()
@@ -106,10 +112,11 @@ def get_gold_prices():
         # Convert the records to a list of dictionaries
         gold_prices_list = [{'date': record[0], 'predicted': record[1], 'actual': record[2]} for record in gold_prices]
 
-        # Return the records as JSON data
+        # Return the filtered records as JSON data
         return jsonify(gold_prices_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500  # Return an error response if an exception occurs
+
 
 
 #scheduler
