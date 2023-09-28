@@ -1,3 +1,9 @@
+:root {
+  --intro-backgorund-color: #0e2535;
+  --font-color: #ececec;
+  --chart-background-color: #f4f4f7;
+}
+
 body {
   margin: auto;
   padding: 0;
@@ -30,46 +36,39 @@ code {
 
 .main-chart {
   border: 2px solid lightgray;
-  background-color: #f4f4f7;
+  background-color: var(--chart-background-color);
   box-shadow: 2px 5px 10px darkgray;
   padding: 15px 5px 10px 5px;
-}
-
-.line-chart {
-  /* border: 2px dashed red; */
 }
 
 .intro {
   padding: 10px 50px;
   width: 30%;
   height: 100vh;
-  /* border: 2px solid red; */
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   margin-right: 10px;
-  background-color: #0e2535;
-  z-index: -1;
-  color: rgb(203, 219, 228);
+  background-color: var(--intro-backgorund-color);
+  z-index: 1;
+  color: var(--font-color);
 }
 
 .intro-paragraph {
   text-align: justify;
   line-height: 1.5;
-  /* text-shadow: 0.5px 0.2px grey; */
   font-weight: bold;
 }
 
 .nav-bar {
   height: 50px;
-  background-color: #f4f7f5;
+  background-color: var(--intro-backgorund-color);
   display: flex;
   justify-content: left;
   align-items: center;
   padding-left: 30px;
   box-shadow: 1px 1px 10px grey;
-  /* border-radius: 2px; */
 }
 
 .nav-link {
@@ -78,12 +77,12 @@ code {
 
 .nav-bar a.active {
   font-weight: bold;
-  color: #0e2535;
+  color: var(--font-color);
 }
 
 .nav-bar a {
   text-decoration: none;
-  color: #0e2535;
+  color: var(--font-color);
 }
 
 table {
@@ -92,30 +91,24 @@ table {
 }
 
 thead {
-  background-color: #f2f2f2;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--font-color);
 }
 
 th {
   text-align: left;
   padding: 12px;
   font-weight: bold;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--font-color);
 }
 
 td {
   padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  border-bottom: 1px solid var(--font-color);
 }
 
 table,
 th,
 td {
-  /* border: 1px solid #ccc; */
   border-collapse: collapse;
   text-align: center;
 }
@@ -124,8 +117,8 @@ table,
 th,
 td,
 h2 {
-  background-color: #0e2535;
-  color: rgb(203, 219, 228);
+  background-color: var(--intro-backgorund-color);
+  color: var(--font-color);
 }
 
 h2 {
@@ -141,5 +134,5 @@ h2 {
   border: 0.5px solid darkgray;
   text-align: center;
   box-shadow: 3px 5px 10px grey;
-  background-color: #0e2535;
+  background-color: var(--intro-backgorund-color);
 }
