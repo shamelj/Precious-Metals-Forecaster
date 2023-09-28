@@ -24,28 +24,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 app.app_context().push()
 
-#SQL
-connection = sqlite3.connect("site.db")
-cursor = connection.cursor()
 
-create_table_query = """
-CREATE TABLE IF NOT EXISTS GoldPrice (
-    id INTEGER PRIMARY KEY,
-    date DaATE,
-    predicted REAL,
-    actual REAL
 
-);
-"""
-
-cursor.execute(create_table_query)
-connection.commit()
-connection.close()
 
 #app.register_blueprint(auth, url_prefix='/auth')
 #app.wsgi_app = AuthenticateMiddleware(app.wsgi_app, ['/auth/login'])
-
-
 #Getting data from API on daily basis:
 
 
@@ -59,9 +42,9 @@ def get_today_value():
     timestamp = parsed['timestamp']
     dt_object = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d")   #Convert Date Format to YYYY-mm-dd
 
-    print('date: ',dt_object)  #print the result
+    #print('date: ',dt_object)  #print the result
     result = parsed['rates']['USD']
-    print('value: ',result)
+    #print('value: ',result)
 
     #connect to db
     connection = sqlite3.connect("site.db")
@@ -70,11 +53,19 @@ def get_today_value():
     date_obj = dt_object
     a = result
     p = 0   #Predicted value from model API  ####### NOT AVAILABLE YET
-    insert_query = "INSERT INTO GoldPrice (date, predicted, actual) VALUES (?, ?, ?)"
-    data = (d, p, a)
-    cursor.execute(insert_query, data)
-    connection.commit()
-    connection.close()
+
+    value_to_check = date_obj
+    cursor.execute("SELECT * FROM GoldPrice WHERE date = ?", (value_to_check,))
+    result = cursor.fetchone()
+
+    if result:  #Check if the date already exists in the database
+        pass     
+    else:       #only insert the new value if it does not exists
+        insert_query = "INSERT INTO GoldPrice (date, predicted, actual) VALUES (?, ?, ?)"
+        data = (date_obj, p, a)
+        cursor.execute(insert_query, data)
+        connection.commit()
+        connection.close()
 
 #scheduler
 scheduler = APScheduler()
@@ -94,12 +85,13 @@ def health_database():
 
 
 if __name__ == '__main__':
-    scheduler.add_job(id='get_today_value',
-        func=get_today_value, 
-        'trigger': 'interval',
-        'days': 1,  # Run the task every day
-        'start_date': datetime.datetime(2023, 9, 28, 0, 0),  # Optional: Specify a start date
-        'timezone': 'UTC'  # Optional: Specify a timezone
+    scheduler.add_job(
+        id='get_today_value',
+        func=get_today_value,
+        trigger= 'interval',
+        days= 1,  # Run the task every day
+        start_date= datetime(2023, 9, 28, 18, 0),  # Optional: Specify a start date
+        timezone= 'UTC'  # Optional: Specify a timezone
         )
     scheduler.start()
     app.run(debug=True, port=5000, use_reloader=False)
