@@ -20,75 +20,43 @@ const formatData = (actual, predictions) => {
         });
 }
 
+const fetchData = async (since) => {
+    let data = await fetch(`http://127.0.0.1:5000/gold_prices?start_date=${since}`);
+    data = await data.json();
+    return data.map((record) => {
+        return {
+            date: record.date.split(' ')[0],
+            predicted: record.predicted,
+            actual: record.actual,
+        }
+    });
+}
+
 const ContinuousEvaluation = () => {
-    const [actual, setActual] = useState([]);
-    const [predictions, setPredictions] = useState([]);
+    const [selectedDate, setSelectedDate] = useState('');
+    const [data, setData] = useState([]);
+    const handleDateChange = (event) => {
+        setSelectedDate(event.target.value);
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-
-            const actualData = [
-                {
-                    date: '2023/09/02',
-                    price: 100
-                }, {
-                    date: '2023/09/01',
-                    price: 200
-                }, {
-                    date: '2023/09/04',
-                    price: 300
-                }, {
-                    date: '2023/09/03',
-                    price: 500
-                }, {
-                    date: '2023/09/05',
-                    price: 900
-                }, {
-                    date: '2023/09/06',
-                    price: 700
-                }, {
-                    date: '2023/09/08',
-                    price: 800
-                },
-            ];
-
-            const predictionsData = [
-                {
-                    date: '2023/09/02',
-                    price: 110
-                }, {
-                    date: '2023/09/01',
-                    price: 180
-                }, {
-                    date: '2023/09/04',
-                    price: 250
-                }, {
-                    date: '2023/09/03',
-                    price: 600
-                }, {
-                    date: '2023/09/05',
-                    price: 1000
-                }, {
-                    date: '2023/09/06',
-                    price: 600
-                }, {
-                    date: '2023/09/08',
-                    price: 650
-                },
-            ];
-
-            setActual(actualData);
-            setPredictions(predictionsData);
-        }
-        fetchData();
-    }, []);
-
-    const data = formatData(actual, predictions);
+        fetchData(selectedDate).then(d => setData(d));
+    }, [selectedDate]);
 
     return (
         <div className='evaluation'>
-            <PredictionStatsTable actual={actual} predictions={predictions}
-            />
+            <div className='stats-container'>
+                <div className='evaluation-input'>
+                    <input
+                        type="date"
+                        id="dateInput"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                    />
+                </div>
+                <PredictionStatsTable actual={data.actual} predictions={data.prediction}
+                />
+            </div>
             <TimeserieseChart
                 data={data}
             />

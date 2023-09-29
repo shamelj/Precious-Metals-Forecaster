@@ -128,11 +128,22 @@ h2 {
 }
 
 .prediction-stats {
-  margin-right: 50px;
   border-radius: 10px;
   padding: 5px;
   border: 0.5px solid darkgray;
   text-align: center;
   box-shadow: 3px 5px 10px grey;
   background-color: var(--intro-backgorund-color);
+}
+
+.stats-container {
+  margin-right: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.evaluation-input {
+  margin: 10px 50px;
 }

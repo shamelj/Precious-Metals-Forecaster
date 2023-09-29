@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask import Flask, jsonify, request
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
@@ -15,6 +15,7 @@ from flask_apscheduler import APScheduler
 
 
 app = Flask(__name__)
+cors = CORS(app)
 
 db_name = 'gsg_project_database'
 db_user = 'gsg_project_user'
