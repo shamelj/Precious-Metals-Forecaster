@@ -60,20 +60,40 @@ def get_prediction():
     pridiction = pred.predict(x)
     return pridiction
 
-@app.route('/prediction', methods=['GET'])
+def get_predictions(steps):
+    predictions = []
+    x = get_latest_gold_prices(5).tolist()
+    pred = Predictor()
+    for i in range(steps):
+        prediction = pred.predict(np.array(x))
+        predictions.append(prediction)
+        x.append(prediction)
+        x = x[1:]
+    return predictions
+
+@app.route('/predictions', methods=['GET'])
 def get_gold_price_prediction():
     try:
-        prediction = get_prediction()
-        return jsonify({'prediction': prediction})
+        # Get the 'num_predictions' query parameter from the request URL
+        steps = request.args.get('steps')
+
+        # Convert 'num_predictions' to an integer (you can add error handling as needed)
+        steps = int(steps)
+
+        # Call the function to get predictions with the specified number
+        predictions = get_predictions(steps)
+
+        return jsonify({'predictions': predictions})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # print(get_latest_gold_prices(5), get_prediction())
 
 def get_today_value():
     """The function calls the API on daily bases and uploads the most recent data to DB"""
 
-    API_URL = f'https://api.metalpriceapi.com/v1/latest?api_key={API_KEY1}&base=XAU&currencies=USD'
+    API_URL = f'https://api.metalpriceapi.com/v1/latest?api_key={API_KEY2}&base=XAU&currencies=USD'
     res = requests.get(API_URL) 
     parsed = res.json()
     timestamp = parsed['timestamp']
