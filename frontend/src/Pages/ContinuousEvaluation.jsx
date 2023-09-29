@@ -37,25 +37,26 @@ const ContinuousEvaluation = () => {
     const [data, setData] = useState([]);
     const handleDateChange = (event) => {
         setSelectedDate(event.target.value);
-      };
-
+    };
 
     useEffect(() => {
-        fetchData(selectedDate).then(d => setData(d) );
+        fetchData(selectedDate).then(d => setData(d));
     }, [selectedDate]);
 
     return (
         <div className='evaluation'>
-            <div>
-                <input
-                    type="date"
-                    id="dateInput"
-                    value={selectedDate}
-                    onChange={handleDateChange}
+            <div className='stats-container'>
+                <div className='evaluation-input'>
+                    <input
+                        type="date"
+                        id="dateInput"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                    />
+                </div>
+                <PredictionStatsTable actual={data.actual} predictions={data.prediction}
                 />
             </div>
-            {/* <PredictionStatsTable actual={actual} predictions={predictions}
-            /> */}
             <TimeserieseChart
                 data={data}
             />
