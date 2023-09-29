@@ -63,10 +63,10 @@ git clone https://github.com/your-username/Precious-Metals-Forecaster.git
 # Change your working directory to the 'backend' folder
 cd Precious-Metals-Forecaster/backend
 
-# (Optional) Create a virtual environment
+# Create a virtual environment
 python -m venv ./.venv
 
-# (Optional) Activate the virtual environment
+# Activate the virtual environment
 # On Windows:
 .\.venv\Scripts\activate
 # On macOS and Linux:
