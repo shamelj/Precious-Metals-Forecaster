@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
-#from auth.endpoints import auth
-#from auth.middleware import AuthenticateMiddleware
+
 import requests
 from datetime import datetime, date
 import json
@@ -28,14 +28,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 app.app_context().push()
 
-
-
-
-#app.register_blueprint(auth, url_prefix='/auth')
-#app.wsgi_app = AuthenticateMiddleware(app.wsgi_app, ['/auth/login'])
-#Getting data from API on daily basis:
-
-
 def get_today_value():
     """The function calls the API on daily bases and uploads the most recent data to DB"""
 
@@ -59,7 +51,6 @@ def get_today_value():
     value_to_check = date_obj
     cursor.execute("SELECT * FROM GoldPrice WHERE date = ?", (value_to_check,))
     result = cursor.fetchone()
-
     if result:  #Check if the date already exists in the database
         pass     
     else:       #only insert the new value if it does not exists
@@ -68,6 +59,40 @@ def get_today_value():
         cursor.execute(insert_query, data)
         connection.commit()
         connection.close()
+
+
+# Define a route to fetch records from the GoldPrice table based on a start_date parameter
+@app.route('/gold_prices', methods=['GET'])
+def get_gold_prices():
+    try:
+        # Connect to the SQLite database
+        connection = sqlite3.connect("site.db")
+
+        # Create a cursor object to execute SQL queries
+        cursor = connection.cursor()
+        print(request.args.get('start_date'))
+        # Get the 'start_date' parameter from the query string (e.g., /gold_prices?start_date=2023-09-28)
+        start_date = request.args.get('start_date')
+
+        # Define the SQL query with a WHERE clause to filter records by 'date'
+        query = "SELECT date, predicted, actual FROM GoldPrice WHERE date >= ?"
+
+        # Execute the query with the 'start_date' parameter
+        cursor.execute(query, (start_date,))
+
+        # Fetch all records from the result cursor
+        gold_prices = cursor.fetchall()
+
+        # Close the database connection
+        connection.close()
+
+        # Convert the records to a list of dictionaries
+        gold_prices_list = [{'date': record[0], 'predicted': record[1], 'actual': record[2]} for record in gold_prices]
+
+        # Return the filtered records as JSON data
+        return jsonify(gold_prices_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Return an error response if an exception occurs
 
 #scheduler
 scheduler = APScheduler()
