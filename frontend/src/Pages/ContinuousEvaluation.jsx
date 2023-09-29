@@ -4,22 +4,6 @@ import PredictionStatsTable from '../Components/PredictionStatsTable';
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
 
-const formatData = (actual, predictions) => {
-    const data = [];
-
-    const datePredictValueMap = {};
-
-    for (const prediction of predictions) {
-        datePredictValueMap[prediction.date] = prediction.price;
-    }
-
-    return actual
-        .sort(comparator)
-        .map(o => {
-            return { date: o.date, priceActual: o.price, pricePrediction: datePredictValueMap[o.date] }
-        });
-}
-
 const fetchData = async (since) => {
     let data = await fetch(`http://127.0.0.1:5000/gold_prices?start_date=${since}`);
     data = await data.json();
@@ -29,7 +13,7 @@ const fetchData = async (since) => {
             predicted: record.predicted,
             actual: record.actual,
         }
-    });
+    }).sort(comparator);
 }
 
 const ContinuousEvaluation = () => {
@@ -54,8 +38,8 @@ const ContinuousEvaluation = () => {
                     onChange={handleDateChange}
                 />
             </div>
-            {/* <PredictionStatsTable actual={actual} predictions={predictions}
-            /> */}
+            <PredictionStatsTable actual={[]} predictions={[]}
+            />
             <TimeserieseChart
                 data={data}
             />
