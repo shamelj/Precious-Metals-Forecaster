@@ -9,6 +9,7 @@ from datetime import datetime, date
 import json
 import sqlite3
 from Predictor import Predictor
+from apscheduler.triggers.cron import CronTrigger
 
 from flask_apscheduler import APScheduler
 
@@ -190,17 +191,14 @@ def health_database():
     # except:
         # return 'Database connection failed'
 
-
 if __name__ == '__main__':
     scheduler.add_job(
         id='get_today_value',
         func=get_today_value,
-        trigger= 'interval',
-        days= 1,  # Run the task every day
-        start_date= datetime(2023, 9, 28, 18, 0),  # Optional: Specify a start date
-        timezone= 'UTC'  # Optional: Specify a timezone
-        )
+        trigger=CronTrigger(day_of_week='mon-fri', hour=21, minute=0),  # Run on weekdays (Mon-Fri) at 21:00 Palestine time
+        start_date=datetime(2023, 9, 28, 21, 0),  # Optional: Specify a start date
+        timezone='Asia/Gaza'  # Set the time zone to Palestine Standard Time (PST)
+    )
     scheduler.start()
     app.run(debug=True, port=5000, use_reloader=False)
-
    
