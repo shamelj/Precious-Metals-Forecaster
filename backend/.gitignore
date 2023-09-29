@@ -1,2 +1,3 @@
 apitest.py
 .venv/
+__pycache__/
