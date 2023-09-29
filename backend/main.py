@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import os
-
+import numpy as np
 import requests
 from datetime import datetime, date
 import json
@@ -28,6 +28,46 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 app.app_context().push()
 
+
+def get_latest_gold_prices(days):
+    # Connect to the SQLite database
+    connection = sqlite3.connect("site.db")
+
+    # Create a cursor object to execute SQL queries
+    cursor = connection.cursor()
+
+    # Define the SQL query to fetch the latest 4 gold prices
+    query = f"SELECT date, predicted, actual FROM GoldPrice ORDER BY date DESC LIMIT {days}"
+
+    # Execute the query
+    cursor.execute(query)
+
+    # Fetch the latest 4 gold prices from the result cursor
+    latest_gold_prices = cursor.fetchall()
+
+    # Close the database connection
+    connection.close()
+    latest_gold_prices_list = [record[2] for record in latest_gold_prices]
+
+    return np.array(latest_gold_prices_list)
+
+
+def get_prediction():
+    x = get_latest_gold_prices(5)
+    pred = Predictor()
+    pridiction = pred.predict(x)
+    return pridiction
+
+@app.route('/prediction', methods=['GET'])
+def get_gold_price_prediction():
+    try:
+        prediction = get_prediction()
+        return jsonify({'prediction': prediction})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# print(get_latest_gold_prices(5), get_prediction())
+
 def get_today_value():
     """The function calls the API on daily bases and uploads the most recent data to DB"""
 
@@ -46,7 +86,7 @@ def get_today_value():
 
     date_obj = dt_object
     a = result
-    p = 0   #Predicted value from model API  ####### NOT AVAILABLE YET
+    p = get_prediction()   #Predicted value from model API  ####### NOT AVAILABLE YET
 
     value_to_check = date_obj
     cursor.execute("SELECT * FROM GoldPrice WHERE date = ?", (value_to_check,))
@@ -59,6 +99,43 @@ def get_today_value():
         cursor.execute(insert_query, data)
         connection.commit()
         connection.close()
+
+
+def migrate():
+    max_train_date = get_max_date()
+    if max_train_date != date_obj:
+        insert_missing_prices_after()
+
+# Define a route to fetch the record with the maximum date from the GoldPrice table
+@app.route('/gold_prices/latest', methods=['GET'])
+def get_latest_gold_price():
+    try:
+        # Connect to the SQLite database
+        connection = sqlite3.connect("site.db")
+
+        # Create a cursor object to execute SQL queries
+        cursor = connection.cursor()
+
+        # Define the SQL query to fetch the record with the maximum date
+        query = "SELECT date, predicted, actual FROM GoldPrice WHERE date = (SELECT MAX(date) FROM GoldPrice)"
+
+        # Execute the query
+        cursor.execute(query)
+
+        # Fetch the record with the maximum date from the result cursor
+        max_gold_price = cursor.fetchone()
+
+        # Close the database connection
+        connection.close()
+
+        # Convert the record to a dictionary
+        if max_gold_price:
+            max_gold_price_dict = {'date': max_gold_price[0], 'predicted': max_gold_price[1], 'actual': max_gold_price[2]}
+            return jsonify(max_gold_price_dict)
+        else:
+            return jsonify({'message': 'No records found in GoldPrice table'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Return an error response if an exception occurs
 
 
 # Define a route to fetch records from the GoldPrice table based on a start_date parameter
@@ -96,35 +173,6 @@ def get_gold_prices():
 
 #scheduler
 scheduler = APScheduler()
-
-# Actual values Endpoint
-
-@app.route('/actuals', methods=['GET'])
-def api_endpoint():
-    # Get query parameters from the URL
-    try:
-        param1 = request.args.get('start_date')
-        
-        # Check if required parameters are missing
-        if param1 is None:
-            return jsonify({'error': 'Missing required query parameters'}), 400
-
-        # Process the parameters
-
-        URL = f'https://api.metalpriceapi.com/v1/{param1}?api_key={API_KEY1}&base=XAU&currencies=USD'
-        res = requests.get(URL) 
-        parsed = res.json()
-        print('parsed', parsed)
-        timestamp = parsed['timestamp']
-        dt_object = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d")   #Convert Date Format to YYYY-mm-dd
-        #print('date: ',dt_object)  #print the result
-        result = parsed['rates']['USD']
-        return jsonify({'Date:':dt_object, 'Price:': result})
-
-    except Exception as e:
-    # Handle the exception and return an error response
-        return jsonify({'error': str(e)}), 500
-
 
 @app.route('/health')
 def health_backend():
