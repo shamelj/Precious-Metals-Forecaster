@@ -16,12 +16,12 @@ const TimeserieseChart = ({ data }) => {
                     <Legend />
                     <Line className='line'
                         type="linear"
-                        dataKey="priceActual"
+                        dataKey="actual"
                         stroke="#808080"
                         strokeWidth={3} />
                     <Line className='line'
                         type="linear"
-                        dataKey="pricePrediction"
+                        dataKey="predicted"
                         stroke="blue" 
                         strokeWidth={3}/>
                 </LineChart>
