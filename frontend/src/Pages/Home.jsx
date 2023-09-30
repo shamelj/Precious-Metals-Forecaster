@@ -71,7 +71,7 @@ const Home = () => {
     return (
         <div className='home'>
             <Intro />
-            <NumberInput 
+            <NumberInput
             title={'Days Forward'}
             value={steps}
             onChange={handleStepsChange}/>
