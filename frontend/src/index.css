@@ -136,3 +136,8 @@ h2 {
   box-shadow: 3px 5px 10px grey;
   background-color: var(--intro-backgorund-color);
 }
+
+.inputNumber {
+  position: absolute;
+  top: 68px;
+}

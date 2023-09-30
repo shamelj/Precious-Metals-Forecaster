@@ -1,101 +1,83 @@
 import { useEffect, useState } from 'react';
 import TimeserieseChart from '../Components/TimeserieseChart'
 import Intro from '../Components/Intro';
+import NumberInput from '../Components/NumberInput';
 
-const comparator = (a, b) => new Date(a.date) - new Date(b.date);
+const getPrev = async (sinceDate) => {
+    const sinceString = `${sinceDate.getFullYear()}-${String(sinceDate.getMonth()+1).padStart(2, '0')}-${String(sinceDate.getDate()).padStart(2, '0')}`;
+    let prev = await fetch(`http://127.0.0.1:5000/gold_prices?start_date=${sinceString}`);
+    prev = await prev.json();
+    
+    return prev.map( (row) => {
+        return {
+            date: row.date.split(' ')[0],
+            actual: row.actual
+        }
+    });
+}
 
-const formatData = (actual, prediction) => {
-    const data = [];
+const getPrid = async (stepsForward) => {
+    const response = await fetch(`http://127.0.0.1:5000/predictions?steps=${stepsForward}`);
+    const json = await response.json();
+    let predictions = json.predictions;
 
-    const actualFormatted = actual
-        .sort(comparator)
-        .map(o => {
-            return { date: o.date, priceActual: o.price }
-        });
+    const lastDate = new Date();
+    
+    return predictions.map((val) => {
+        lastDate.setDate(lastDate.getDate() + 1);
+        const dayOfWeek = lastDate.getDay();
+        if( dayOfWeek < 2 ){
+            lastDate.setDate(lastDate.getDate() + 1 - dayOfWeek);
+        }
+        return {
+            date: lastDate.getFullYear() +
+            `-${String(lastDate.getMonth()+1).padStart(2, '0')}` +
+            `-${String(lastDate.getDate()).padStart(2, '0')}`,
+            predicted: val
+            };
+    });
+}
 
-    const predictionFormatted = prediction
-        .sort(comparator)
-        .map(o => {
-            return { date: o.date, pricePrediction: o.price }
-        });
+const fetchData = async (sinceDate, stepsForward) => {
+    const prev = await getPrev(sinceDate);
 
-    if (actual.length + prediction.length === 0) {
-        data.push({
-            date: '',
-            priceActual: 0
-        });
-    } else {
-        actualFormatted[actualFormatted.length - 1].pricePrediction = actualFormatted[actualFormatted.length - 1].priceActual;
-        data.push(...actualFormatted, ...predictionFormatted);
-    }
-    return data;
+    let predictions = await getPrid(stepsForward);
+    
+    const lastActual = prev[prev.length-1];
+    lastActual.predicted = lastActual.actual;
+    
+    return [...prev, ...predictions];
 }
 
 const Home = () => {
-    const [actual, setActual] = useState([]);
-    const [predictions, setPredictions] = useState([]);
+    const [steps, setSteps] = useState(3);
+    const [data, setData] = useState([]);
+
+    const handleStepsChange = (event) => {
+        const value = parseFloat(event.target.value);
+        
+        if (!isNaN(value)) {
+          setSteps(value);
+        }
+      };
 
     useEffect(() => {
-        const fetchData = async () => {
+        const sinceDate = new Date();
+        sinceDate.setDate(sinceDate.getDate() - 20);
+        fetchData(sinceDate, steps).then( (d) => setData(d));
+    }, [steps]);
 
-            const actualData = [
-                {
-                    date: '2023/09/02',
-                    price: 100
-                }, {
-                    date: '2023/09/01',
-                    price: 200
-                }, {
-                    date: '2023/09/04',
-                    price: 300
-                }, {
-                    date: '2023/09/03',
-                    price: 500
-                }, {
-                    date: '2023/09/05',
-                    price: 900
-                }, {
-                    date: '2023/09/06',
-                    price: 700
-                }, {
-                    date: '2023/09/08',
-                    price: 800
-                },
-            ];
-
-            const predictionsData = [
-                {
-                    date: '2023/09/09',
-                    price: 1000
-                }, {
-                    date: '2023/09/10',
-                    price: 1100
-                }, {
-                    date: '2023/09/11',
-                    price: 900
-                }, {
-                    date: '2023/09/12',
-                    price: 700
-                }, {
-                    date: '2023/09/13',
-                    price: 800
-                },
-            ];
-
-            setActual(actualData);
-            setPredictions(predictionsData);
-        }
-        fetchData();
-    }, []);
-
-    const data = formatData(actual, predictions);
 
     return (
         <div className='home'>
             <Intro />
+            <NumberInput 
+            title={'Days Forward'}
+            value={steps}
+            onChange={handleStepsChange}/>
             <TimeserieseChart
                 data={data}
-            />            
+            />     
         </div>
     );
 }

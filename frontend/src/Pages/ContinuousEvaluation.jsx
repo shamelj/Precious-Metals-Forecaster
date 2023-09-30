@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import TimeserieseChart from '../Components/TimeserieseChart';
 import PredictionStatsTable from '../Components/PredictionStatsTable';
+import DateInput from '../Components/DateInput';
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
 
@@ -17,29 +18,30 @@ const fetchData = async (since) => {
 }
 
 const ContinuousEvaluation = () => {
-    const [selectedDate, setSelectedDate] = useState('');
+    const [startingDate, setStartingDate] = useState('');
     const [data, setData] = useState([]);
     const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
+        setStartingDate(event.target.value);
       };
 
-
     useEffect(() => {
-        fetchData(selectedDate).then(d => setData(d) );
-    }, [selectedDate]);
+        fetchData(startingDate)
+        .then(d => setData(d) );
+    }, [startingDate]);
 
     return (
         <div className='evaluation'>
-            <div>
-                <input
-                    type="date"
-                    id="dateInput"
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                />
-            </div>
-            <PredictionStatsTable actual={[]} predictions={[]}
+
+            <DateInput 
+            title={'Starting Date'} 
+            selectedDate={startingDate} 
+            onChange={handleDateChange}/>
+
+            <PredictionStatsTable 
+            actual={[]} 
+            predictions={[]}
             />
+
             <TimeserieseChart
                 data={data}
             />
