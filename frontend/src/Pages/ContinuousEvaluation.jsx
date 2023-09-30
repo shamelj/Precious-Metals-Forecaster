@@ -18,7 +18,13 @@ const fetchData = async (since) => {
 }
 
 const ContinuousEvaluation = () => {
-    const [startingDate, setStartingDate] = useState('');
+    const initalDate = new Date();
+    initalDate.setDate(initalDate.getDate() - 50);
+    const initalDateString = initalDate.getFullYear() +
+        `-${String(initalDate.getMonth()+1).padStart(2, '0')}` +
+        `-${String(initalDate.getDate()).padStart(2, '0')}`;
+
+    const [startingDate, setStartingDate] = useState(initalDateString);
     const [data, setData] = useState([]);
     const handleDateChange = (event) => {
         setStartingDate(event.target.value);
@@ -38,8 +44,7 @@ const ContinuousEvaluation = () => {
             onChange={handleDateChange}/>
 
             <PredictionStatsTable 
-            actual={[]} 
-            predictions={[]}
+            data={data}
             />
 
             <TimeserieseChart
