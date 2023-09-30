@@ -10,6 +10,7 @@ import json
 import sqlite3
 from Predictor import Predictor
 from apscheduler.triggers.cron import CronTrigger
+import config
 
 from flask_apscheduler import APScheduler
 
@@ -54,14 +55,14 @@ def get_latest_gold_prices(days):
 
 
 def get_prediction():
-    x = get_latest_gold_prices(5)
+    x = get_latest_gold_prices(conf)
     pred = Predictor()
     pridiction = pred.predict(x)
     return pridiction
 
 def get_predictions(steps):
     predictions = []
-    x = get_latest_gold_prices(5).tolist()
+    x = get_latest_gold_prices(config.Predictor.STEPS).tolist()
     pred = Predictor()
     for i in range(steps):
         prediction = pred.predict(np.array(x))
