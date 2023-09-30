@@ -21,32 +21,32 @@ const ContinuousEvaluation = () => {
     const initalDate = new Date();
     initalDate.setDate(initalDate.getDate() - 50);
     const initalDateString = initalDate.getFullYear() +
-        `-${String(initalDate.getMonth()+1).padStart(2, '0')}` +
+        `-${String(initalDate.getMonth() + 1).padStart(2, '0')}` +
         `-${String(initalDate.getDate()).padStart(2, '0')}`;
 
     const [startingDate, setStartingDate] = useState(initalDateString);
     const [data, setData] = useState([]);
     const handleDateChange = (event) => {
         setStartingDate(event.target.value);
-      };
+    };
 
     useEffect(() => {
         fetchData(startingDate)
-        .then(d => setData(d) );
+            .then(d => setData(d));
     }, [startingDate]);
 
     return (
         <div className='evaluation'>
+            <div className='date-input-stats'>
+                <DateInput
+                    title={'Starting Date'}
+                    selectedDate={startingDate}
+                    onChange={handleDateChange} />
 
-            <DateInput 
-            title={'Starting Date'} 
-            selectedDate={startingDate} 
-            onChange={handleDateChange}/>
-
-            <PredictionStatsTable 
-            data={data}
-            />
-
+                <PredictionStatsTable
+                    data={data}
+                />
+            </div>
             <TimeserieseChart
                 data={data}
             />
