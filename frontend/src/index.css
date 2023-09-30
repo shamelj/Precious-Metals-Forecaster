@@ -136,6 +136,11 @@ h2 {
   background-color: var(--intro-backgorund-color);
 }
 
+.inputNumber {
+  position: absolute;
+  top: 68px;
+}
+
 .stats-container {
   margin-right: 50px;
   display: flex;

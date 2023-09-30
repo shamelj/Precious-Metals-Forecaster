@@ -1,20 +1,27 @@
 import React from 'react';
 
-const PredictionStatsTable = ({ actual, predictions }) => {
+const PredictionStatsTable = ({ data }) => {
   // Calculate RMSE, min error, max error, or any other statistics you need
+  const errors = () => {
+    return data
+    .filter( (row) => row.predicted )
+    .map( (row) => row.actual - row.predicted )
+  }
+
   const calculateRMSE = () => {
-    // Calculate RMSE logic here
-    return 100;
+    const sumSquaredErrors = errors()
+    .map( (error) => error*error )
+    .reduce((a, b) => a + b , 0);
+
+    return Math.sqrt(sumSquaredErrors)/errors().length;
   };
 
   const calculateMinError = () => {
-    // Calculate min error logic here
-    return 20;
+    return Math.min( ...(errors().map(Math.abs)) );
   };
 
   const calculateMaxError = () => {
-    // Calculate max error logic here
-    return 140;
+    return Math.max( ...(errors().map(Math.abs)) );
   };
 
   // Call the functions to calculate the statistics
@@ -35,15 +42,15 @@ const PredictionStatsTable = ({ actual, predictions }) => {
         <tbody>
           <tr>
             <td>RMSE (Root Mean Square Error)</td>
-            <td>{rmse}</td>
+            <td>{rmse.toFixed(2)}</td>
           </tr>
           <tr>
             <td>Minimum Error</td>
-            <td>{minError}</td>
+            <td>{minError.toFixed(2)}</td>
           </tr>
           <tr>
             <td>Maximum Error</td>
-            <td>{maxError}</td>
+            <td>{maxError.toFixed(2)}</td>
           </tr>
         </tbody>
       </table>

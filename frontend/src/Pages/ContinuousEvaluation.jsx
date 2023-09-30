@@ -1,24 +1,9 @@
 import { useEffect, useState } from 'react';
 import TimeserieseChart from '../Components/TimeserieseChart';
 import PredictionStatsTable from '../Components/PredictionStatsTable';
+import DateInput from '../Components/DateInput';
 
 const comparator = (a, b) => new Date(a.date) - new Date(b.date);
-
-const formatData = (actual, predictions) => {
-    const data = [];
-
-    const datePredictValueMap = {};
-
-    for (const prediction of predictions) {
-        datePredictValueMap[prediction.date] = prediction.price;
-    }
-
-    return actual
-        .sort(comparator)
-        .map(o => {
-            return { date: o.date, priceActual: o.price, pricePrediction: datePredictValueMap[o.date] }
-        });
-}
 
 const fetchData = async (since) => {
     let data = await fetch(`http://127.0.0.1:5000/gold_prices?start_date=${since}`);
@@ -29,34 +14,39 @@ const fetchData = async (since) => {
             predicted: record.predicted,
             actual: record.actual,
         }
-    });
+    }).sort(comparator);
 }
 
 const ContinuousEvaluation = () => {
-    const [selectedDate, setSelectedDate] = useState('');
+    const initalDate = new Date();
+    initalDate.setDate(initalDate.getDate() - 50);
+    const initalDateString = initalDate.getFullYear() +
+        `-${String(initalDate.getMonth()+1).padStart(2, '0')}` +
+        `-${String(initalDate.getDate()).padStart(2, '0')}`;
+
+    const [startingDate, setStartingDate] = useState(initalDateString);
     const [data, setData] = useState([]);
     const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
-    };
+        setStartingDate(event.target.value);
+      };
 
     useEffect(() => {
-        fetchData(selectedDate).then(d => setData(d));
-    }, [selectedDate]);
+        fetchData(startingDate)
+        .then(d => setData(d) );
+    }, [startingDate]);
 
     return (
         <div className='evaluation'>
-            <div className='stats-container'>
-                <div className='evaluation-input'>
-                    <input
-                        type="date"
-                        id="dateInput"
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                    />
-                </div>
-                <PredictionStatsTable actual={data.actual} predictions={data.prediction}
-                />
-            </div>
+
+            <DateInput 
+            title={'Starting Date'} 
+            selectedDate={startingDate} 
+            onChange={handleDateChange}/>
+
+            <PredictionStatsTable 
+            data={data}
+            />
+
             <TimeserieseChart
                 data={data}
             />
