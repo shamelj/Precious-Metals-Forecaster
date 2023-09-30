@@ -66,9 +66,9 @@ def seed_predictions():
 
     connection.close()
 
-    for i in range(5, len(gold_prices)):
+    for i in range(config.Predictor.STEPS, len(gold_prices)):
         curr_day_record = gold_prices[i]
-        x = gold_prices[i-5:i]
+        x = gold_prices[i-config.Predictor.STEPS:i]
         x = [record[2] for record in x]
         x = np.array(x)
         pred = Predictor()
@@ -76,4 +76,4 @@ def seed_predictions():
         update_predicted_record(curr_day_record[0], prediction)
 
 # add_actuals_seed()
-# seed_predictions()
+seed_predictions()
