@@ -128,7 +128,6 @@ h2 {
 }
 
 .prediction-stats {
-  margin-right: 50px;
   border-radius: 10px;
   padding: 5px;
   border: 0.5px solid darkgray;
@@ -140,4 +139,16 @@ h2 {
 .inputNumber {
   position: absolute;
   top: 68px;
+}
+
+.stats-container {
+  margin-right: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.evaluation-input {
+  margin: 10px 50px;
 }
